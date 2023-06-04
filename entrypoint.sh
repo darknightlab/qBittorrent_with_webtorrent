@@ -4,25 +4,28 @@ downloadsPath="/downloads"
 profilePath="/config"
 qbtConfigFile="$profilePath/qBittorrent/config/qBittorrent.conf"
 
-if [ -n "$PUID" ]; then
-    sed -i "s|^qbtUser:x:[0-9]*:|qbtUser:x:$PUID:|g" /etc/passwd
-fi
+PUID=${PUID:-0}
+PGID=${PGID:-0}
 
-if [ -n "$PGID" ]; then
-    sed -i "s|^\(qbtUser:x:[0-9]*\):[0-9]*:|\1:$PGID:|g" /etc/passwd
-    sed -i "s|^qbtUser:x:[0-9]*:|qbtUser:x:$PGID:|g" /etc/group
-fi
+# if [ -n "$PUID" ]; then
+#     sed -i "s|^qbtUser:x:[0-9]*:|qbtUser:x:$PUID:|g" /etc/passwd
+# fi
 
-if [ -n "$PAGID" ]; then
-    _origIFS="$IFS"
-    IFS=','
-    for AGID in $PAGID; do
-        AGID=$(echo "$AGID" | tr -d '[:space:]"')
-        addgroup -g "$AGID" "qbtGroup-$AGID"
-        addgroup qbtUser "qbtGroup-$AGID"
-    done
-    IFS="$_origIFS"
-fi
+# if [ -n "$PGID" ]; then
+#     sed -i "s|^\(qbtUser:x:[0-9]*\):[0-9]*:|\1:$PGID:|g" /etc/passwd
+#     sed -i "s|^qbtUser:x:[0-9]*:|qbtUser:x:$PGID:|g" /etc/group
+# fi
+
+# if [ -n "$PAGID" ]; then
+#     _origIFS="$IFS"
+#     IFS=','
+#     for AGID in $PAGID; do
+#         AGID=$(echo "$AGID" | tr -d '[:space:]"')
+#         addgroup -g "$AGID" "qbtGroup-$AGID"
+#         addgroup qbtUser "qbtGroup-$AGID"
+#     done
+#     IFS="$_origIFS"
+# fi
 
 if [ ! -f "$qbtConfigFile" ]; then
     mkdir -p "$(dirname $qbtConfigFile)"
@@ -50,8 +53,8 @@ fi
 
 # those are owned by root by default
 # don't change existing files owner in `$downloadsPath`
-chown qbtUser:qbtUser "$downloadsPath"
-chown qbtUser:qbtUser -R "$profilePath"
+chown $PUID:$PGID "$downloadsPath"
+chown $PUID:$PGID -R "$profilePath"
 
 # set umask just before starting qbt
 if [ -n "$UMASK" ]; then
@@ -59,7 +62,7 @@ if [ -n "$UMASK" ]; then
 fi
 
 exec \
-    doas -u qbtUser \
+    doas -u $PUID \
         qbittorrent-nox \
             --profile="$profilePath" \
             --webui-port="$QBT_WEBUI_PORT" \
