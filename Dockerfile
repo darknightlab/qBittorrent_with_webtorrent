@@ -102,7 +102,6 @@ RUN \
     echo "qBittorrent ${QBT_VERSION}" >> /sbom.txt ; \
     fi && \
     echo >> /sbom.txt && \
-    apk list -I | sort >> /sbom.txt && \
     cat /sbom.txt
 
 
