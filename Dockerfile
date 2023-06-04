@@ -1,5 +1,7 @@
 FROM ubuntu:latest
 
+ENV DEBIAN_FRONTEND=noninteractive 
+
 ARG QBT_VERSION
 ARG LIBBT_CMAKE_FLAGS="-Dwebtorrent=ON"
 ARG LIBBT_VERSION
