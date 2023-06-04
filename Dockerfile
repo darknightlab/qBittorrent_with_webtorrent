@@ -21,6 +21,7 @@ RUN \
 
 # install dependencies
 RUN \
+    sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list && \
     apt update && \
     apt install -y build-essential pkg-config automake libtool git zlib1g-dev libssl-dev libgeoip-dev && \
     apt install -y libboost-dev libboost-system-dev libboost-chrono-dev libboost-random-dev && \
@@ -38,14 +39,14 @@ RUN \
     git clone \
     --depth 1 \
     --recurse-submodules \
-    https://github.com/arvidn/libtorrent.git && \
+    git@github.com:arvidn/libtorrent.git && \
     cd libtorrent ; \
     elif [ "${LIBBT_VERSION}" = "master" ]; then \
     git clone \
     --depth 1 \
     --recurse-submodules \
     -b master \
-    https://github.com/arvidn/libtorrent.git && \
+    git@github.com:arvidn/libtorrent.git && \
     cd libtorrent ; \
     else \
     wget "https://github.com/arvidn/libtorrent/releases/download/v${LIBBT_VERSION}/libtorrent-rasterbar-${LIBBT_VERSION}.tar.gz" && \
@@ -66,7 +67,7 @@ RUN \
     git clone \
     --depth 1 \
     --recurse-submodules \
-    https://github.com/qbittorrent/qBittorrent.git && \
+    git@github.com:qbittorrent/qBittorrent.git && \
     cd qBittorrent ; \
     else \
     wget "https://github.com/qbittorrent/qBittorrent/archive/refs/tags/release-${QBT_VERSION}.tar.gz" && \
@@ -104,6 +105,11 @@ RUN \
     echo >> /sbom.txt && \
     cat /sbom.txt
 
+RUN \
+    apt update && \
+    apt install -y doas && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
