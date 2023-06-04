@@ -25,15 +25,14 @@ RUN \
     apt install -y build-essential pkg-config automake libtool git zlib1g-dev libssl-dev libgeoip-dev && \
     apt install -y libboost-dev libboost-system-dev libboost-chrono-dev libboost-random-dev && \
     apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
+    apt install -y cmake wget doas && \
     apt clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    echo "permit nopass keepenv :root" >> /etc/doas.conf && \
+    chmod 400 /etc/doas.conf
 
 # build libtorrent
 RUN \
-    apt update && \
-    apt install -y cmake wget && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/* && \
     if [ "${LIBBT_VERSION}" = "devel" ]; then \
     git clone \
     --depth 1 \
@@ -103,14 +102,6 @@ RUN \
     fi && \
     echo >> /sbom.txt && \
     cat /sbom.txt
-
-RUN \
-    apt update && \
-    apt install -y doas && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    echo "permit nopass keepenv :root" >> /etc/doas.conf && \
-    chmod 400 /etc/doas.conf
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
