@@ -109,7 +109,7 @@ RUN \
     apt install -y doas && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
-    echo "permit nopass keepenv :root as root cmd /usr/local/bin/qbittorrent-nox" >> /etc/doas.conf && \
+    echo "permit nopass keepenv :root" >> /etc/doas.conf && \
     chmod 400 /etc/doas.conf
 
 COPY entrypoint.sh /entrypoint.sh
