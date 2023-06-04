@@ -78,7 +78,7 @@ RUN \
     make install
 
 RUN \
-    ldd /usr/bin/qbittorrent-nox | sort -f
+    ldd /usr/local/bin/qbittorrent-nox | sort -f
 
 # record compile-time Software Bill of Materials (sbom)
 RUN \
@@ -90,6 +90,7 @@ RUN \
     elif [ "${LIBBT_VERSION}" = "master" ]; then \
     cd libtorrent && \
     echo "libtorrent-rasterbar git $(git rev-parse HEAD)" >> /sbom.txt && \
+    cd .. ; \
     else \
     echo "libtorrent-rasterbar ${LIBBT_VERSION}" >> /sbom.txt ; \
     fi && \
