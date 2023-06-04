@@ -73,8 +73,7 @@ RUN \
     tar -xf "release-${QBT_VERSION}.tar.gz" && \
     cd "qBittorrent-release-${QBT_VERSION}" ; \
     fi && \
-    ./configure CXXFLAGS="-std=c++17" && \
-    --disable-gui && \
+    ./configure CXXFLAGS="-std=c++17" --disable-gui && \
     make -j$(nproc) && \
     make install
 
