@@ -30,6 +30,10 @@ RUN \
 
 # build libtorrent
 RUN \
+    apt update && \
+    apt install -y cmake && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
     if [ "${LIBBT_VERSION}" = "devel" ]; then \
     git clone \
     --depth 1 \
