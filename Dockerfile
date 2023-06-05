@@ -2,6 +2,7 @@ FROM ubuntu:latest as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+ARG QT_VERSION=6
 ARG QBT_VERSION
 ARG LIBBT_CMAKE_FLAGS="-Dwebtorrent=ON"
 ARG LIBBT_VERSION
@@ -24,10 +25,14 @@ RUN \
     apt update && \
     apt install -y wget curl && \
     apt install -y git build-essential pkg-config cmake ninja-build libboost-dev libssl-dev libgeoip-dev zlib1g-dev libgl1-mesa-dev && \
+    if ["${QT_VERSION}" = "5"]; then \
     # install qt5
-    # apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
+    apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev ; \
+    fi ; \
+    elif ["${QT_VERSION}" = "6"]; then \
     # install qt6
-    apt install -y qt6-base-dev qt6-tools-dev libqt6svg6-dev qt6-l10n-tools qt6-tools-dev-tools && \
+    apt install -y qt6-base-dev qt6-tools-dev libqt6svg6-dev qt6-l10n-tools qt6-tools-dev-tools ; \
+    fi ; \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -79,7 +84,8 @@ RUN \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DGUI=OFF \
-    -DQT6=ON && \
+    # QT_VERSION=6就ON，6就OFF
+    -DQT6=$([ "${QT_VERSION}}" == 6 ] && echo -n "ON" || echo -n "OFF") && \
     cmake --build build -j$(nproc) && \
     cmake --install build
 
@@ -107,6 +113,7 @@ RUN \
     else \
     echo "qBittorrent ${QBT_VERSION}" >> /sbom.txt ; \
     fi && \
+    echo "qt version ${QT_VERSION}" >> /sbom.txt && \
     echo >> /sbom.txt && \
     cat /sbom.txt
 
@@ -127,10 +134,17 @@ ENV LC_ALL=C.UTF-8
 
 RUN \
     apt update && \
+    if ["${QT_VERSION}" = "6"]; then \
     apt install -y --no-install-recommends qt6-base-dev qt6-gtk-platformtheme \
     # libqt6sql6 可以不装，没区别
-    libqt6sql6 \
-    doas && \
+    libqt6sql6 ; \
+    fi; \
+    elif ["${QT_VERSION}" = "5"]; then \
+    apt install -y --no-install-recommends qtbase5-dev qt5-gtk-platformtheme \
+    # libqt5sql5 可以不装，没区别
+    libqt5sql5 ; \
+    fi ; \
+    apt install -y --no-install-recommends doas && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "permit nopass keepenv :root" >> /etc/doas.conf && \

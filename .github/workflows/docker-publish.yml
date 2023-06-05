@@ -87,6 +87,7 @@ jobs:
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
                   build-args: |
+                      QT_VERSION=6
                       QBT_VERSION=devel
                       LIBBT_VERSION=master
                       LIBBT_CMAKE_FLAGS=-Dwebtorrent=ON
