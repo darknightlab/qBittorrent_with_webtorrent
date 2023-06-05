@@ -9,7 +9,7 @@ on:
     push:
         # branches: ["main"]
         # Publish semver tags as releases.
-        tags: ["qBv*.*.*-ltv*.*.*-qtv5-release-*"]
+        tags: ["qBv*.*.*-ltv*.*.*-qt5*"]
     pull_request:
         branches: ["main"]
     workflow_dispatch:

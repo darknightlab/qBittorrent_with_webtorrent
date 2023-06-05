@@ -7,9 +7,9 @@ name: Docker
 
 on:
     push:
-        # branches: ["main"]
+        branches: ["main"]
         # Publish semver tags as releases.
-        tags: ["qBv*.*.*-ltv*.*.*-qt6*"]
+        # tags: ["qBv*.*.*-ltv*.*.*-qt6*"]
     pull_request:
         branches: ["main"]
     workflow_dispatch:
