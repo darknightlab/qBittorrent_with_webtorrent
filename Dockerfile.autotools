@@ -23,12 +23,9 @@ RUN \
 RUN \
     apt update && \
     apt install -y build-essential pkg-config automake libtool git zlib1g-dev libssl-dev libgeoip-dev && \
-    apt install -y cmake ninja-build libgl1-mesa-dev && \
     apt install -y libboost-dev libboost-system-dev libboost-chrono-dev libboost-random-dev && \
     # install qt5
-    # apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
-    # install qt6
-    apt install -y qt6-qtbase-dev qt6-qttools-dev libqt6svg6-dev && \
+    apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
     apt install -y cmake wget doas && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -56,9 +53,8 @@ RUN \
     cd "libtorrent-rasterbar-${LIBBT_VERSION}" ; \
     fi && \
     cmake -B build \
-    -DCMAKE_CXX_STANDARD=17 \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_CXX_STANDARD=17 \
     -DCMAKE_INSTALL_PREFIX=/usr \
     $LIBBT_CMAKE_FLAGS && \
     cmake --build build -j$(nproc) && \
@@ -77,17 +73,12 @@ RUN \
     tar -xf "release-${QBT_VERSION}.tar.gz" && \
     cd "qBittorrent-release-${QBT_VERSION}" ; \
     fi && \
-    cmake -G "Ninja" -B build \
-    -DCMAKE_CXX_STANDARD=17 \
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -DGUI=OFF \
-    -DQT6=ON && \
-    cmake --build build -j$(nproc) && \
-    cmake --install build
+    ./configure CXXFLAGS="-std=c++17" --disable-gui && \
+    make -j$(nproc) && \
+    make install
 
 RUN \
-    ldd /usr/bin/qbittorrent-nox | sort -f
+    ldd /usr/local/bin/qbittorrent-nox | sort -f
 
 # record compile-time Software Bill of Materials (sbom)
 RUN \
