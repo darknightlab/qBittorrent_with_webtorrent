@@ -103,6 +103,8 @@ RUN \
     echo >> /sbom.txt && \
     cat /sbom.txt
 
+RUN useradd -M -s /bin/bash -U -u 1000 qbtUser
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

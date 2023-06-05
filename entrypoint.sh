@@ -4,17 +4,17 @@ downloadsPath="/downloads"
 profilePath="/config"
 qbtConfigFile="$profilePath/qBittorrent/config/qBittorrent.conf"
 
-PUID=${PUID:-0}
-PGID=${PGID:-0}
+# PUID=${PUID:-0}
+# PGID=${PGID:-0}
 
-# if [ -n "$PUID" ]; then
-#     sed -i "s|^qbtUser:x:[0-9]*:|qbtUser:x:$PUID:|g" /etc/passwd
-# fi
+if [ -n "$PUID" ]; then
+    sed -i "s|^qbtUser:x:[0-9]*:|qbtUser:x:$PUID:|g" /etc/passwd
+fi
 
-# if [ -n "$PGID" ]; then
-#     sed -i "s|^\(qbtUser:x:[0-9]*\):[0-9]*:|\1:$PGID:|g" /etc/passwd
-#     sed -i "s|^qbtUser:x:[0-9]*:|qbtUser:x:$PGID:|g" /etc/group
-# fi
+if [ -n "$PGID" ]; then
+    sed -i "s|^\(qbtUser:x:[0-9]*\):[0-9]*:|\1:$PGID:|g" /etc/passwd
+    sed -i "s|^qbtUser:x:[0-9]*:|qbtUser:x:$PGID:|g" /etc/group
+fi
 
 # if [ -n "$PAGID" ]; then
 #     _origIFS="$IFS"
@@ -47,14 +47,16 @@ else
     sed -i '/^\[LegalNotice\]$/{$!{N;s|\(\[LegalNotice\]\nAccepted=\).*|\1false|}}' "$qbtConfigFile"
 fi
 
-if [ -z "$QBT_WEBUI_PORT" ]; then
-    QBT_WEBUI_PORT=8080
+if [ -z "$WEBUI_PORT" ]; then
+    WEBUI_PORT=8080
 fi
 
 # those are owned by root by default
 # don't change existing files owner in `$downloadsPath`
-chown $PUID:$PGID "$downloadsPath"
-chown $PUID:$PGID -R "$profilePath"
+if [ -e "$downloadsPath" ]; then
+    chown qbtUser:qbtUser "$downloadsPath"
+fi
+chown qbtUser:qbtUser -R "$profilePath"
 
 # set umask just before starting qbt
 if [ -n "$UMASK" ]; then
@@ -62,8 +64,8 @@ if [ -n "$UMASK" ]; then
 fi
 
 exec \
-    doas -u $PUID \
+    doas -u qbtUser \
         qbittorrent-nox \
             --profile="$profilePath" \
-            --webui-port="$QBT_WEBUI_PORT" \
+            --webui-port="$WEBUI_PORT" \
             "$@"

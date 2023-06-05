@@ -43,7 +43,7 @@ It is also recommended to install Docker Compose as it can significantly ease th
     This environment variable specifies the version of qBittorrent-nox to be built. \
     For example, `4.4.0` is a valid entry. You can find all tagged versions [here](https://github.com/qbittorrent/qBittorrent/tags). \
     Or you can put `devel` to build the latest development version.
--   `QBT_WEBUI_PORT` \
+-   `WEBUI_PORT` \
     This environment variable sets the port number which qBittorrent WebUI will be binded to.
     Defaults to port `8080` if value is not set.
 
@@ -66,7 +66,7 @@ There are some paths involved:
     export \
       QBT_EULA=<put_accept_here> \
       QBT_VERSION=devel \
-      QBT_WEBUI_PORT=8080 \
+      WEBUI_PORT=8080 \
       QBT_CONFIG_PATH="<your_path>/config" \
       QBT_DOWNLOADS_PATH="<your_path>/downloads"
     docker run \
@@ -77,9 +77,9 @@ There are some paths involved:
       --stop-timeout 1800 \
       --tmpfs /tmp \
       -e QBT_EULA \
-      -e QBT_WEBUI_PORT \
+      -e WEBUI_PORT \
       -e TZ=UTC \
-      -p "$QBT_WEBUI_PORT":"$QBT_WEBUI_PORT"/tcp \
+      -p "$WEBUI_PORT":"$WEBUI_PORT"/tcp \
       -p 6881:6881/tcp \
       -p 6881:6881/udp \
       -v "$QBT_CONFIG_PATH":/config \
