@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-ENV DEBIAN_FRONTEND=noninteractive 
+ENV DEBIAN_FRONTEND=noninteractive
 
 ARG QBT_VERSION
 ARG LIBBT_CMAKE_FLAGS="-Dwebtorrent=ON"
@@ -24,7 +24,10 @@ RUN \
     apt update && \
     apt install -y build-essential pkg-config automake libtool git zlib1g-dev libssl-dev libgeoip-dev && \
     apt install -y libboost-dev libboost-system-dev libboost-chrono-dev libboost-random-dev && \
-    apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
+    # install qt5
+    # apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
+    # install qt6
+    apt install -y qt6-base-dev qt6-tools-dev libqt6svg6-dev && \
     apt install -y cmake wget doas && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -102,6 +105,11 @@ RUN \
     fi && \
     echo >> /sbom.txt && \
     cat /sbom.txt
+
+# to solve qbittorrent(libtorrent)  Non-ASCII characters in directories are handled as dots  https://github.com/qbittorrent/qBittorrent/issues/16127
+ENV LC_ALL=C.UTF-8
+# delete DEBIAN_FRONTEND
+ENV DEBIAN_FRONTEND=
 
 RUN useradd -M -s /bin/bash -U -u 1000 qbtUser
 

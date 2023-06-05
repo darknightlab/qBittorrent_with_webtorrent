@@ -29,6 +29,8 @@ It is also recommended to install Docker Compose as it can significantly ease th
     ```shell
     docker compose build \
       --build-arg QBT_VERSION
+      --build-arg LIBBT_VERSION \
+      --build-arg LIBBT_CMAKE_FLAGS \
     ```
 
 ### Parameters
