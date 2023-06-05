@@ -110,31 +110,36 @@ RUN \
     echo >> /sbom.txt && \
     cat /sbom.txt
 
-FROM builder as gatherer
-RUN \
-    mkdir /gathered && \
-    ldd /usr/bin/qbittorrent-nox | grep "=> /" | awk '{print $3}' |  xargs -I '{}' sh -c "cp -v --parents {} /gathered" && \
-    cp --parents /usr/bin/qbittorrent-nox /gathered
+# 由于缩小镜像之后webui无法正常显示，所以暂时注释
+# FROM builder as gatherer
+# RUN \
+#     mkdir /gathered && \
+#     ldd /usr/bin/qbittorrent-nox | grep "=> /" | awk '{print $3}' |  xargs -I '{}' sh -c "cp -v --parents {} /gathered" && \
+#     cp --parents /usr/bin/qbittorrent-nox /gathered
 
-FROM ubuntu:latest
+# FROM ubuntu:latest
+
+# COPY --from=gatherer /gathered/usr /usr
+# COPY --from=gatherer /gathered/lib /usr/lib
+# COPY --from=builder /sbom.txt /sbom.txt
 
 # to solve qbittorrent(libtorrent)  Non-ASCII characters in directories are handled as dots  https://github.com/qbittorrent/qBittorrent/issues/16127
 ENV LC_ALL=C.UTF-8
 
 RUN \
     apt update && \
-    # 不加qt6-base-dev会 qt.network.ssl: No functional TLS backend was found
-    apt install -y --no-install-recommends doas qt6-base-dev && \
+    # 不加qt6-base-dev会 qt.network.ssl: No functional TLS backend was found，这里暂时不缩小镜像不用装
+    # apt install -y --no-install-recommends qt6-base-dev && \
+    apt install -y --no-install-recommends doas && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "permit nopass keepenv :root" >> /etc/doas.conf && \
     chmod 400 /etc/doas.conf
 
+ENV DEBIAN_FRONTEND=
+
 RUN useradd -M -s /bin/bash -U -u 1000 qbtUser
 
-COPY --from=gatherer /gathered/usr /usr
-COPY --from=gatherer /gathered/lib /usr/lib
-COPY --from=builder /sbom.txt /sbom.txt
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
