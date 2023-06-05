@@ -25,10 +25,10 @@ RUN \
     apt update && \
     apt install -y wget curl && \
     apt install -y git build-essential pkg-config cmake ninja-build libboost-dev libssl-dev libgeoip-dev zlib1g-dev libgl1-mesa-dev && \
-    if [ "${QT_VERSION}" == "5" ]; then \
+    if [ "${QT_VERSION}" = "5" ]; then \
     # install qt5
     apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev ; \
-    elif [ "${QT_VERSION}" == "6" ]; then \
+    elif [ "${QT_VERSION}" = "6" ]; then \
     # install qt6
     apt install -y qt6-base-dev qt6-tools-dev libqt6svg6-dev qt6-l10n-tools qt6-tools-dev-tools ; \
     fi ; \
@@ -37,13 +37,13 @@ RUN \
 
 # build libtorrent
 RUN \
-    if [ "${LIBBT_VERSION}" == "devel" ]; then \
+    if [ "${LIBBT_VERSION}" = "devel" ]; then \
     git clone \
     --depth 1 \
     --recurse-submodules \
     https://github.com/arvidn/libtorrent.git && \
     cd libtorrent ; \
-    elif [ "${LIBBT_VERSION}" == "master" ]; then \
+    elif [ "${LIBBT_VERSION}" = "master" ]; then \
     git clone \
     --depth 1 \
     --recurse-submodules \
@@ -66,7 +66,7 @@ RUN \
 
 # build qbittorrent
 RUN \
-    if [ "${QBT_VERSION}" == "devel" ]; then \
+    if [ "${QBT_VERSION}" = "devel" ]; then \
     git clone \
     --depth 1 \
     --recurse-submodules \
@@ -84,7 +84,7 @@ RUN \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DGUI=OFF \
     # QT_VERSION=6就ON，5就OFF
-    -DQT6=$([ "${QT_VERSION}" == "6" ] && echo -n "ON" || echo -n "OFF") && \
+    -DQT6=$([ "${QT_VERSION}" = "6" ] && echo -n "ON" || echo -n "OFF") && \
     cmake --build build -j$(nproc) && \
     cmake --install build
 
@@ -94,18 +94,18 @@ RUN \
 # record compile-time Software Bill of Materials (sbom)
 RUN \
     printf "Software Bill of Materials for building qbittorrent-nox\n\n" >> /sbom.txt && \
-    if [ "${LIBBT_VERSION}" == "devel" ]; then \
+    if [ "${LIBBT_VERSION}" = "devel" ]; then \
     cd libtorrent && \
     echo "libtorrent-rasterbar git $(git rev-parse HEAD)" >> /sbom.txt && \
     cd .. ; \
-    elif [ "${LIBBT_VERSION}" == "master" ]; then \
+    elif [ "${LIBBT_VERSION}" = "master" ]; then \
     cd libtorrent && \
     echo "libtorrent-rasterbar git $(git rev-parse HEAD)" >> /sbom.txt && \
     cd .. ; \
     else \
     echo "libtorrent-rasterbar ${LIBBT_VERSION}" >> /sbom.txt ; \
     fi && \
-    if [ "${QBT_VERSION}" == "devel" ]; then \
+    if [ "${QBT_VERSION}" = "devel" ]; then \
     cd qBittorrent && \
     echo "qBittorrent git $(git rev-parse HEAD)" >> /sbom.txt && \
     cd .. ; \
@@ -133,11 +133,11 @@ ENV LC_ALL=C.UTF-8
 
 RUN \
     apt update && \
-    if [ "${QT_VERSION}" == "6" ]; then \
+    if [ "${QT_VERSION}" = "6" ]; then \
     apt install -y --no-install-recommends qt6-base-dev qt6-gtk-platformtheme \
     # libqt6sql6 可以不装，没区别
     libqt6sql6 ; \
-    elif [ "${QT_VERSION}" == "5" ]; then \
+    elif [ "${QT_VERSION}" = "5" ]; then \
     apt install -y --no-install-recommends qtbase5-dev qt5-gtk-platformtheme \
     # libqt5sql5 可以不装，没区别
     libqt5sql5 ; \
