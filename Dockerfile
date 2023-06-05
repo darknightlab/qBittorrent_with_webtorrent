@@ -130,7 +130,7 @@ RUN \
     apt install -y --no-install-recommends qt6-base-dev qt6-gtk-platformtheme \
     # libqt6sql6 可以不装，没区别
     libqt6sql6 \
-    doas \
+    doas && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "permit nopass keepenv :root" >> /etc/doas.conf && \
