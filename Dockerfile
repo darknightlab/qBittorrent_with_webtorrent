@@ -122,7 +122,9 @@ RUN \
     ldd /usr/bin/qbittorrent-nox | grep "=> /" | awk '{print $3}' |  xargs -I '{}' sh -c "cp -v --parents {} /gathered" && \
     cp --parents /usr/bin/qbittorrent-nox /gathered
 
-FROM ubuntu:latest
+FROM ubuntu:latest as runtime
+
+ARG QT_VERSION=6
 
 COPY --from=gatherer /gathered/usr /usr
 COPY --from=gatherer /gathered/lib /usr/lib
