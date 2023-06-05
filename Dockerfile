@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:latest as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -22,16 +22,14 @@ RUN \
 # install dependencies
 RUN \
     apt update && \
-    apt install -y git wget curl doas && \
-    apt install -y build-essential pkg-config cmake ninja-build libboost-dev libssl-dev libgeoip-dev zlib1g-dev libgl1-mesa-dev && \
+    apt install -y wget curl && \
+    apt install -y git build-essential pkg-config cmake ninja-build libboost-dev libssl-dev libgeoip-dev zlib1g-dev libgl1-mesa-dev && \
     # install qt5
     # apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
     # install qt6
     apt install -y qt6-base-dev qt6-tools-dev libqt6svg6-dev qt6-l10n-tools qt6-tools-dev-tools && \
     apt clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    echo "permit nopass keepenv :root" >> /etc/doas.conf && \
-    chmod 400 /etc/doas.conf
+    rm -rf /var/lib/apt/lists/*
 
 # build libtorrent
 RUN \
@@ -112,13 +110,29 @@ RUN \
     echo >> /sbom.txt && \
     cat /sbom.txt
 
+FROM builder as gatherer
+RUN \
+    mkdir /gathered && \
+    ldd /usr/bin/qbittorrent-nox | grep "=> /" | awk '{print $3}' |  xargs -I '{}' sh -c "cp -v --parents {} /gathered" && \
+    cp --parents /usr/bin/qbittorrent-nox /gathered
+
+FROM ubuntu:latest
+
 # to solve qbittorrent(libtorrent)  Non-ASCII characters in directories are handled as dots  https://github.com/qbittorrent/qBittorrent/issues/16127
 ENV LC_ALL=C.UTF-8
-# delete DEBIAN_FRONTEND
-ENV DEBIAN_FRONTEND=
+
+RUN \
+    apt update && \
+    apt install -y --no-install-recommends doas && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo "permit nopass keepenv :root" >> /etc/doas.conf && \
+    chmod 400 /etc/doas.conf
 
 RUN useradd -M -s /bin/bash -U -u 1000 qbtUser
 
+COPY --from=gatherer /gathered /
+COPY --from=builder /sbom.txt /sbom.txt
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
