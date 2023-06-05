@@ -22,14 +22,12 @@ RUN \
 # install dependencies
 RUN \
     apt update && \
-    apt install -y build-essential pkg-config automake libtool git zlib1g-dev libssl-dev libgeoip-dev && \
-    apt install -y cmake ninja-build libgl1-mesa-dev && \
-    apt install -y libboost-dev libboost-system-dev libboost-chrono-dev libboost-random-dev && \
+    apt install -y git wget curl doas && \
+    apt install -y build-essential pkg-config cmake ninja-build libboost-dev libssl-dev libgeoip-dev zlib1g-dev libgl1-mesa-dev && \
     # install qt5
     # apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
     # install qt6
-    apt install -y qt6-base-dev qt6-tools-dev libqt6svg6-dev && \
-    apt install -y cmake wget doas && \
+    apt install -y qt6-base-dev qt6-tools-dev libqt6svg6-dev qt6-l10n-tools qt6-tools-dev-tools && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "permit nopass keepenv :root" >> /etc/doas.conf && \
@@ -77,7 +75,8 @@ RUN \
     tar -xf "release-${QBT_VERSION}.tar.gz" && \
     cd "qBittorrent-release-${QBT_VERSION}" ; \
     fi && \
-    cmake -G "Ninja" -B build \
+    cmake -B build \
+    -G Ninja \
     -DCMAKE_CXX_STANDARD=17 \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo \
     -DCMAKE_INSTALL_PREFIX=/usr \
