@@ -123,7 +123,8 @@ ENV LC_ALL=C.UTF-8
 
 RUN \
     apt update && \
-    apt install -y --no-install-recommends doas && \
+    # 不加qt6-base-dev会 qt.network.ssl: No functional TLS backend was found
+    apt install -y --no-install-recommends doas qt6-base-dev && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "permit nopass keepenv :root" >> /etc/doas.conf && \
@@ -131,7 +132,8 @@ RUN \
 
 RUN useradd -M -s /bin/bash -U -u 1000 qbtUser
 
-COPY --from=gatherer /gathered /
+COPY --from=gatherer /gathered/usr /usr
+COPY --from=gatherer /gathered/lib /usr/lib
 COPY --from=builder /sbom.txt /sbom.txt
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
