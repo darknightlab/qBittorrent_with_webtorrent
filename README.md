@@ -27,6 +27,12 @@ It is also recommended to install Docker Compose as it can significantly ease th
 
 #### Environment variables
 
+-   `QT_VERSION` \
+    5 or 6
+-   `LIBBT_VERSION` \
+    devel or master or vx.x.x
+-   `LIBBT_CMAKE_FLAGS` \
+    -Dwebtorrent=ON
 -   `QBT_EULA` \
     This environment variable defines whether you accept the end-user license agreement (EULA) of qBittorrent. \
     **Put `accept` only if you understand and accepted the EULA.** You can find
@@ -122,7 +128,7 @@ There are some paths involved:
         environment variable `UMASK`. By default it uses the default from Alpine Linux.
     -   You can list the compile-time Software Bill of Materials (sbom) with the following command:
         ```shell
-        docker run --entrypoint /bin/cat --rm qbittorrentofficial/qbittorrent-nox:latest /sbom.txt
+        docker run --entrypoint /bin/cat --rm darknightlab/qittorrent_with_webtorrent:main /sbom.txt
         ```
 
 -   Then you can login to qBittorrent-nox at: `http://<your_docker_host_address>:8080` \
