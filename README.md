@@ -12,17 +12,6 @@ It is also recommended to install Docker Compose as it can significantly ease th
 
 ## Building Docker Image
 
--   If you are using Docker (not Docker Compose) then run the following commands in this folder:
-
-    ```shell
-    export \
-      QBT_VERSION=devel
-    docker build \
-      --build-arg QBT_VERSION \
-      -t qbittorrent-nox:"$QBT_VERSION" \
-      .
-    ```
-
 -   If you are using Docker Compose then you should edit `.env` file first.
     You can find an explanation of the variables in the following [Parameters](#parameters) section. \
     Then run the following commands in this folder:
@@ -91,6 +80,26 @@ There are some paths involved:
     ```
 
 -   Using Docker Compose:
+
+    ```shell
+    version: "3"
+
+    services:
+        qbittorrent-nox:
+            image: darknightlab/qbittorrent_with_webtorrent:main # :qBv*.*.*-ltv*.*.*-qt5/6
+            container_name: qbittorrent-nox
+            restart: always
+            network_mode: host
+            volumes:
+            - ./config:/config
+            - ./downloads:/downloads
+            environment:
+            - WEBUI_PORT=8080
+            - PUID=1000
+            - PGID=1000
+            - QBT_EULA=accept
+
+    ```
 
     ```shell
     docker compose up
