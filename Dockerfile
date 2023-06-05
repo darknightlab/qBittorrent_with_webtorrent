@@ -28,7 +28,7 @@ RUN \
     # install qt5
     # apt install -y qtbase5-dev qttools5-dev libqt5svg5-dev && \
     # install qt6
-    apt install -y qt6-qtbase-dev qt6-qttools-dev libqt6svg6-dev && \
+    apt install -y qt6-base-dev qt6-tools-dev libqt6svg6-dev && \
     apt install -y cmake wget doas && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
