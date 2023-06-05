@@ -128,7 +128,7 @@ There are some paths involved:
         environment variable `UMASK`. By default it uses the default from Alpine Linux.
     -   You can list the compile-time Software Bill of Materials (sbom) with the following command:
         ```shell
-        docker run --entrypoint /bin/cat --rm darknightlab/qittorrent_with_webtorrent:main /sbom.txt
+        docker run --entrypoint /bin/cat --rm darknightlab/qbittorrent_with_webtorrent:main /sbom.txt
         ```
 
 -   Then you can login to qBittorrent-nox at: `http://<your_docker_host_address>:8080` \
