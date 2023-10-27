@@ -144,7 +144,7 @@ RUN \
     # libqt5sql5 可以不装，没区别
     libqt5sql5 ; \
     fi ; \
-    apt install -y --no-install-recommends doas && \
+    apt install -y --no-install-recommends doas openssl && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "permit nopass keepenv :root" >> /etc/doas.conf && \
