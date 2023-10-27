@@ -150,7 +150,7 @@ RUN \
     echo "permit nopass keepenv :root" >> /etc/doas.conf && \
     chmod 400 /etc/doas.conf
 
-RUN useradd -M -s /bin/bash -U -u 1000 qbtUser || usermod -s /bin/bash -U -l qbtUser -m $(getent passwd 1000 | cut -d: -f1)
+RUN useradd -M -s /bin/bash -U -u 1000 qbtUser || usermod -s /bin/bash -U -l qbtUser $(getent passwd 1000 | cut -d: -f1)
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
