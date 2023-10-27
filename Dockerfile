@@ -1,4 +1,4 @@
-FROM ubuntu:latest as builder
+FROM ubuntu:rolling as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
