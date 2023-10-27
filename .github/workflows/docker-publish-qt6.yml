@@ -35,6 +35,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up environment
+        run: |
+          QB=$(echo "${GITHUB_REF}" | sed -n 's/^refs\/tags\/qBv\([0-9]\+\.[0-9]\+\.[0-9]\+\).*$/\1/p')
+          LT=$(echo "${GITHUB_REF}" | sed -n 's/^refs\/tags\/qBv[0-9]\+\.[0-9]\+\.[0-9]\+-ltv\([0-9]\+\.[0-9]\+\.[0-9]\+\).*$/\1/p')
+          echo "QB=${QB}" >> $GITHUB_ENV
+          echo "LT=${LT}" >> $GITHUB_ENV
+
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -88,8 +95,8 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             QT_VERSION=6
-            QBT_VERSION=devel
-            LIBBT_VERSION=master
+            QBT_VERSION=${{ env.QB }}
+            LIBBT_VERSION=${{ env.LT }}
             LIBBT_CMAKE_FLAGS=-Dwebtorrent=ON
 
       # Sign the resulting Docker image digest except on PRs.
