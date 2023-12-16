@@ -13,7 +13,7 @@ services:
       #- PUID=1000
       - QBT_EULA=${QBT_EULA}
       - QBT_VERSION=${QBT_VERSION}
-      - WEBUI_PORT=${WEBUI_PORT}
+      - QBT_WEBUI_PORT=${QBT_WEBUI_PORT}
       #- TZ=UTC
       #- UMASK=022
     image: qbittorrent-nox:${QBT_VERSION}
@@ -22,7 +22,7 @@ services:
       - 6881:6881/tcp
       - 6881:6881/udp
       # for WebUI
-      - ${WEBUI_PORT}:${WEBUI_PORT}/tcp
+      - ${QBT_WEBUI_PORT}:${QBT_WEBUI_PORT}/tcp
     # read_only: true
     # stop_grace_period: 30m
     # tmpfs:

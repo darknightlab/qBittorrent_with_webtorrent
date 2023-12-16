@@ -61,7 +61,7 @@ RUN \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo \
     -DCMAKE_INSTALL_PREFIX=/usr \
     $LIBBT_CMAKE_FLAGS && \
-    cmake --build build -j$(nproc) && \
+    cmake --build build -j $(nproc) && \
     cmake --install build
 
 # build qbittorrent
@@ -85,7 +85,7 @@ RUN \
     -DGUI=OFF \
     # QT_VERSION=6就ON，5就OFF
     -DQT6=$([ "${QT_VERSION}" = "6" ] && echo -n "ON" || echo -n "OFF") && \
-    cmake --build build -j$(nproc) && \
+    cmake --build build -j $(nproc) && \
     cmake --install build
 
 RUN \
@@ -150,7 +150,10 @@ RUN \
     echo "permit nopass keepenv :root" >> /etc/doas.conf && \
     chmod 400 /etc/doas.conf
 
-RUN useradd -M -s /bin/bash -U -u 1000 qbtUser || usermod -s /bin/bash -U -l qbtUser $(getent passwd 1000 | cut -d: -f1)
+RUN useradd -M -s /bin/bash -U -u 1000 qbtUser || \
+    getent group qbtUser || groupadd qbtUser && username=$(getent passwd 1000 | cut -d: -f1) && \
+    usermod -g qbtUser $username && \
+    usermod -s /bin/bash -U -l qbtUser $username
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
